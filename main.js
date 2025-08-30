@@ -169,7 +169,6 @@ function startAutoRefresh() {
 // GESTION DES CODES HUMEUR
 // ========================================
 
-<<<<<<< HEAD
 async function addMood(mood) {
     // Vérifier si un mood similaire a déjà été soumis récemment (protection anti-doublon)
     const recentMood = moods.find(m => 
