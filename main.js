@@ -236,9 +236,39 @@ function setupEventListeners() {
         document.getElementById('sessionTime').textContent = minutes;
     }, 60000);
 
-    // Raccourci clavier pour panneau de contrôle (Ctrl+Shift+A)
+    // Raccourci simple pour panneau de contrôle (Triple-clic sur le titre)
+    const titleElement = document.querySelector('.display-section h2');
+    if (titleElement) {
+        let clickCount = 0;
+        titleElement.addEventListener('click', () => {
+            clickCount++;
+            
+            // Feedback visuel
+            titleElement.style.transform = `scale(${0.95 + clickCount * 0.025})`;
+            
+            if (clickCount === 3) {
+                toggleAdminPanel();
+                clickCount = 0;
+                titleElement.style.transform = 'scale(1)';
+            }
+            
+            // Reset après 1 seconde
+            setTimeout(() => {
+                if (clickCount < 3) {
+                    clickCount = 0;
+                    titleElement.style.transform = 'scale(1)';
+                }
+            }, 1000);
+        });
+        
+        // Style du titre pour indiquer qu'il est cliquable
+        titleElement.style.cursor = 'pointer';
+        titleElement.title = 'Triple-clic pour panneau enseignant';
+    }
+
+    // Raccourci clavier alternatif plus simple (Ctrl+E pour Enseignant)
     document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        if (e.ctrlKey && e.key === 'e') {
             e.preventDefault();
             toggleAdminPanel();
         }
@@ -263,7 +293,7 @@ function toggleAdminPanel() {
                 </div>
                 <div class="admin-body">
                     <p class="admin-info">
-                        <strong>Raccourci :</strong> Ctrl+Shift+A<br>
+                        <strong>Accès :</strong> Triple-clic sur "💻 Feed des Humeurs" ou Ctrl+E<br>
                         <strong>Stats :</strong> ${humeurs.length} participants
                     </p>
                     <div class="admin-actions">
