@@ -33,7 +33,7 @@ Interface moderne style **réseaux sociaux** qui s'adapte automatiquement selon 
 └─────────────────────────────────┘
 ```
 
-<<<<<<< HEAD
+
 ```python  
 humeur = "🚀" # prêt à décoller cette année !
 ```
