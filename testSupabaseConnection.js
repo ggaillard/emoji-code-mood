@@ -83,7 +83,8 @@
         const testData = {
             nom: 'Test',
             emoji: '🧪',
-            langage: 'javascript',
+            langage_prefere: 'javascript',  // Utilise langage_prefere
+            autre_preference: 'jeux-video',
             commentaire: 'Test de connexion'
         };
 
