@@ -31,11 +31,7 @@ jobs:
 
       - name: 🔧 Configuration des Pages
         uses: actions/configure-pages@v4
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> 57e3340f1ac7654842fa49c482a8fa317a6ae8dc
       - name: 🔒 Injection des secrets (Configuration Supabase)
         run: |
           echo "🔑 Création du fichier de configuration sécurisé..."
@@ -91,11 +87,7 @@ jobs:
           echo "🔍 Vérification finale de sécurité..."
 
           # Vérifier qu'aucun placeholder n'est resté
-<<<<<<< HEAD
-          if grep -r "VOTRE_PROJECT_REF\|VOTRE_ANON_KEY\|your-project\|your-anon-key" . --exclude-dir=.git; then
-=======
           if grep -r "VOTRE_PROJECT_REF\|VOTRE_ANON_KEY" . --exclude-dir=.git --exclude-dir=docs --exclude-dir=.github; then
->>>>>>> 57e3340f1ac7654842fa49c482a8fa317a6ae8dc
             echo "❌ ERREUR: Des placeholders ont été détectés !"
             exit 1
           fi
@@ -105,17 +97,7 @@ jobs:
             echo "❌ ERREUR: Configuration non injectée !"
             exit 1
           fi
-<<<<<<< HEAD
-          
-          # Vérifier que les secrets sont bien remplacés
-          if grep -q "SUPABASE_URL\|SUPABASE_ANON_KEY" private-config.js; then
-            echo "❌ ERREUR: Les secrets n'ont pas été remplacés !"
-            exit 1
-          fi
-          
-=======
 
->>>>>>> 57e3340f1ac7654842fa49c482a8fa317a6ae8dc
           echo "✅ Vérification de sécurité réussie"
 
       - name: 📊 Informations de build
@@ -135,11 +117,7 @@ jobs:
       - name: 🚀 Déploiement vers GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> 57e3340f1ac7654842fa49c482a8fa317a6ae8dc
       - name: 🎉 Succès du déploiement
         run: |
           echo "✅ Déploiement réussi !"
