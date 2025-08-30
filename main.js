@@ -27,22 +27,66 @@ const AUTO_REFRESH_INTERVAL = 30000; // 30 secondes
 const CONNECTION_CHECK_INTERVAL = 10000; // 10 secondes
 
 // ========================================
-// INITIALISATION SUPABASE VIA MODULE
+// INITIALISATION SUPABASE DIRECTE
 // ========================================
-import { getSupabaseClient } from './supabaseClient.js';
 
 async function initSupabase() {
-    // Charger dynamiquement la lib si besoin (pour navigateur)
-    if (!window.supabaseLib) {
-        window.supabaseLib = await import('https://cdn.skypack.dev/@supabase/supabase-js@2');
-    }
     try {
-        supabase = getSupabaseClient();
+        // Méthode plus robuste pour charger Supabase
+        if (typeof window.supabase === 'undefined') {
+            // Charger via CDN si pas déjà chargé
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+            script.onload = async () => {
+                console.log('📚 Supabase library loaded via CDN');
+                await setupSupabaseConnection();
+            };
+            script.onerror = () => {
+                console.error('❌ Impossible de charger Supabase via CDN');
+                // Fallback vers skypack
+                loadSupabaseViaSkypack();
+            };
+            document.head.appendChild(script);
+        } else {
+            await setupSupabaseConnection();
+        }
+    } catch (error) {
+        console.error('❌ Erreur lors de l\'initialisation Supabase :', error);
+        loadSupabaseViaSkypack();
+    }
+}
+
+async function loadSupabaseViaSkypack() {
+    try {
+        console.log('🔄 Tentative de chargement via Skypack...');
+        const { createClient } = await import('https://cdn.skypack.dev/@supabase/supabase-js@2');
+        window.supabaseCreateClient = createClient;
+        await setupSupabaseConnection();
+    } catch (error) {
+        console.error('❌ Impossible de charger Supabase :', error);
+        isConnected = false;
+        updateConnectionStatus(false);
+        alert('❌ Impossible de charger Supabase. Vérifiez votre connexion internet.');
+    }
+}
+
+async function setupSupabaseConnection() {
+    try {
+        // Utiliser la méthode disponible
+        const createClient = window.supabase?.createClient || window.supabaseCreateClient;
+        
+        if (!createClient) {
+            throw new Error('Fonction createClient non disponible');
+        }
+
+        supabase = createClient(CONFIG.supabaseUrl, CONFIG.supabaseAnonKey);
+        
         // Test de connexion avec la table "humeur"
         const { error } = await supabase.from('humeur').select('count').limit(1);
         if (error) {
             throw error;
         }
+        
         console.log('🚀 Supabase connecté avec succès (table humeur)');
         isConnected = true;
         updateConnectionStatus(true);
@@ -54,7 +98,17 @@ async function initSupabase() {
         console.error('❌ Erreur de connexion Supabase :', error.message || error);
         isConnected = false;
         updateConnectionStatus(false);
-        alert('Connexion à Supabase impossible. Vérifiez la configuration et que la table "humeur" existe.');
+        
+        if (error.message?.includes('relation "public.humeur" does not exist')) {
+            alert('❌ La table "humeur" n\'existe pas dans Supabase.\n\n' +
+                  '💡 Solution :\n' +
+                  '1. Ouvrez Supabase SQL Editor\n' +
+                  '2. Exécutez le script de création de table\n' +
+                  '3. Actualisez cette page');
+        } else {
+            alert('❌ Erreur de connexion Supabase :\n' + error.message + 
+                  '\n\n💡 Vérifiez vos clés API dans les secrets GitHub');
+        }
         return false;
     }
 }
