@@ -215,8 +215,6 @@ Ce projet est sous licence GNU General Public License v3.0
 - Modifications autorisées  
 - Code source ouvert
 
-**Créé par :** [G.Gaillard](https://ggaillard.github.io/)  
-**Contributeurs :** [Liste](contributors)
 
 ---
 
